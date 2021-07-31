@@ -1,6 +1,6 @@
 import React from 'react';
 
-const MyPage = (props) => {
+const Edit = (props) => {
     const [result, setResult] = React.useState({});
     const aboutQuery = '{id}\n';
     React.useEffect(() => {
@@ -24,4 +24,4 @@ const MyPage = (props) => {
     )
 };
 
-export default MyPage;
+export default Edit;

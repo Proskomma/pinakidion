@@ -9,7 +9,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Typography from '@material-ui/core/Typography';
-import { UWProskomma } from 'uw-proskomma';
+import {UWProskomma} from 'uw-proskomma';
 
 import './App.css';
 
@@ -26,14 +26,11 @@ const translationSources = [
     './data/ebible_fr_lsg_pkserialized.json',
 ].map((ts) => path.resolve(ts));
 
-for (const [docSetId, vrsSource] of [
-    // ['ebible/en_web', 'data/web.vrs'],
-]) {
-    const vrs = fse.readFileSync(path.resolve(vrsSource)).toString();
-    const mutationQuery = `mutation { setVerseMapping(docSetId: "${docSetId}" vrsSource: """${vrs}""")}`;
-    mappingQueries.push(mutationQuery);
-}
-
+const draftSources =
+    (fse.existsSync('./data/drafts') ?
+        fse.readdirSync('./data/drafts').filter(f => f.endsWith('_pkserialized.json')) :
+        [])
+        .map((ts) => path.resolve('./data/drafts', ts));
 const styles = theme => ({});
 
 const App = withStyles(styles)(props => {
@@ -57,32 +54,38 @@ const App = withStyles(styles)(props => {
     }
 
     useEffect(() => {
-        const loadTranslation = async (translationSource, count) => {
-            await pk.loadSuccinctDocSet(fse.readJsonSync(translationSource));
-            sharedState.app.setNMutations(count);
-            return true;
-        }
-        const loadTranslations = async () => {
-            let count = 1;
-            for (const translationSource of translationSources) {
-                await loadTranslation(translationSource, count);
-                count++;
+            const loadTranslation = async (translationSource, count) => {
+                await pk.loadSuccinctDocSet(fse.readJsonSync(translationSource));
+                sharedState.app.setNMutations(count);
+                return true;
             }
-        };
-        const loadMappings = async () => {
-            for (const query of mappingQueries) {
-                await pk.gqlQuery(query);
+            const loadTranslations = async () => {
+                let count = 1;
+                for (const translationSource of translationSources) {
+                    await loadTranslation(translationSource, count);
+                    count++;
+                }
+                for (const draftSource of draftSources) {
+                    await loadTranslation(draftSource, count);
+                    count++;
+                }
             }
-        };
-        loadTranslations()
-            .then(
-                () =>
-                    loadMappings()
-                        .then(
-                            () => {}
-                        )
-            );
-    }, []);
+            const loadMappings = async () => {
+                for (const query of mappingQueries) {
+                    await pk.gqlQuery(query);
+                }
+            };
+            loadTranslations()
+                .then(
+                    () =>
+                        loadMappings()
+                            .then(
+                                () => {
+                                }
+                            )
+                );
+        }, []
+    );
 
     return (
         <div className={classes.root}>
