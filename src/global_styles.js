@@ -66,9 +66,6 @@ const styles = (theme) => ({
     fontWeight: "bold",
     fontSize: "larger",
   },
-  browseBlocksScriptureText: {
-    marginTop: "5px",
-  },
   pre: {
     whiteSpace: "pre",
     fontFamily: "monospace",
@@ -112,24 +109,6 @@ const styles = (theme) => ({
   expiredSearchResults: {
     color: "#999",
   },
-  usfm_p: {
-    marginTop: "2px",
-    marginBottom: "2px",
-  },
-  usfm_d: {
-    marginTop: "2px",
-    fontWeight: "bold",
-  },
-  usfm_q: {
-    marginTop: "2px",
-    marginLeft: "2em",
-    fontStyle: "italic",
-  },
-  usfm_q2: {
-    marginTop: "2px",
-    marginLeft: "4em",
-    fontStyle: "italic",
-  },
   grid: {
     border: "solid 1px black",
     marginTop: "10px",
@@ -156,30 +135,7 @@ const styles = (theme) => ({
     paddingRight: "0.2em",
     marginRight: "0.4em",
   },
-  spanBElement: {
-    fontWeight: "bold",
-  },
-  spanIElement: {
-    fontStyle: "italic",
-  },
-  spanQSElement: {
-    fontStyle: "italic",
-  },
-  spanWJElement: {
-    color: "#B00",
-  },
-  spanWithAttsWElement: {},
-  editorMarkup: {
-    fontSize: 'small',
-    fontWeight: 'normal',
-    fontStyle: 'normal',
-    color: '#444',
-    paddingRight: '0.1em',
-    paddingLeft: '0.1em',
-  },
-  cancelBlockEditButton: {
-  },
-  submitBlockEditButton: {
+  newDocSetButton: {
     float: "right",
   },
   formControl: {

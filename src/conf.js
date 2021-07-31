@@ -3,12 +3,14 @@ import browseChapterConf from './Pages/Standard/browseChapter/conf';
 import searchConf from './Pages/Standard/search/conf';
 import rawConf from './Pages/Standard/rawQuery/conf';
 import aboutConf from './Pages/Standard/about/conf';
+import draftsConf from './Pages/MyPages/drafts/conf';
 import editConf from './Pages/MyPages/edit/conf';
 
 const pagesArray = [
     browseVerseConf,
     browseChapterConf,
     searchConf,
+    draftsConf,
     editConf,
     rawConf,
     aboutConf,

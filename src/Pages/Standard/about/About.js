@@ -19,8 +19,8 @@ const About = withStyles(styles)((props) => {
         '{' +
         '  processor packageVersion' +
         '  nDocSets nDocuments\n' +
-        '  docSets {\n' +
-        '    id hasMapping\n' +
+        '  docSets(withoutTags:["draft"]) {\n' +
+        '    id\n' +
         '    documents { id' +
         '    bookCode: header(id:"bookCode")' +
         '    name: header(id:"toc2")}\n' +
