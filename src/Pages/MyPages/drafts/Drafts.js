@@ -314,7 +314,9 @@ const Drafts = withStyles(styles)((props) => {
                                         onClick={
                                             e => {
                                                 e.stopPropagation();
+                                                props.edit.setDocSetId(ds.id);
                                                 props.edit.setDocumentId(d.id);
+                                                props.edit.setBookCode(d.bookCode);
                                                 props.app.setUrl('edit');
                                             }
                                         }>

@@ -7,7 +7,9 @@ const conf = {
   description: "A Scripture Editor",
   pageClass: Edit,
   state: [
+    ['docSetId', null],
     ['documentId', null],
+    ['bookCode', null],
   ],
 };
 
