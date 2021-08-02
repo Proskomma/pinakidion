@@ -27,6 +27,7 @@ const Drafts = withStyles(styles)((props) => {
     const [abbr, setAbbr] = React.useState('');
     const [desc, setDesc] = React.useState('');
     const [issues, setIssues] = React.useState([]);
+    const [selectedDraft, setSelectedDraft] = React.useState('');
     const textFieldAccessors = {
         org,
         lang,
@@ -302,8 +303,24 @@ const Drafts = withStyles(styles)((props) => {
                 <div style={{paddingTop: "100px"}}>
                     <List>
                         {result.data && result.data.docSets.map((ds, index) => (
-                            <ListItem key={index} button dense>
-                                <ListItemText primary={ds.id} secondary={`${ds.documents.length} books`}/>
+                            <ListItem
+                                key={index}
+                                button
+                                dense
+                                onClick={() => selectedDraft === ds.id ? setSelectedDraft('') : setSelectedDraft(ds.id)}>
+                                <ListItemText primary={ds.id} secondary={selectedDraft === ds.id ? <List>
+                                    {ds.documents.map(d => <ListItem
+                                        key={d.id}
+                                        onClick={
+                                            e => {
+                                                e.stopPropagation();
+                                                props.edit.setDocumentId(d.id);
+                                                props.app.setUrl('edit');
+                                            }
+                                        }>
+                                        {d.bookCode}
+                                    </ListItem>)}
+                                </List> : ''}/>
                             </ListItem>
                         ))}
                     </List>
