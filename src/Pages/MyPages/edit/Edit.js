@@ -1,5 +1,7 @@
 import React from 'react';
 import Typography from "@material-ui/core/Typography";
+import {createEditor} from 'slate';
+import {Editable, Slate, withReact} from 'slate-react';
 import aghastModel from "proskomma-render-aghast";
 
 const Edit = (props) => {
@@ -43,10 +45,38 @@ const Edit = (props) => {
                 const config = {};
                 const model = aghastModel(res.data, config);
                 model.render();
-                setAghast(config.aghast);
+                setAghast([config.aghast]);
             }
         });
     }, [props.pk, props.edit]);
+    const slateEditor = React.useMemo(() => withReact(createEditor()), []);
+    slateEditor.isInline = (element) => ['mark', 'tokens'].includes(element.type);
+    const renderElement = React.useCallback(({attributes, children, element}) => {
+        const voidStyle = {
+            userSelect: "none",
+            backgroundColor: "#EEE",
+            paddingLeft: '0.25em',
+            paddingRight: '0.25em',
+            marginRight: '0.25em',
+        }
+        switch (element.type) {
+            case 'blockGraft':
+                return <div {...attributes}>
+                    <div contentEditable={false} style={voidStyle}>{children}</div>
+                </div>;
+            case 'block':
+                return <div {...attributes}>
+                    <span contentEditable={false} style={voidStyle}>{element.scope.split('/')[1]}</span>
+                    {children}
+                </div>;
+            case 'mark':
+                return <span {...attributes}>
+                    <span contentEditable={false} style={voidStyle}>{children}</span>
+                </span>;
+            default:
+                return <span {...attributes}>{children}</span>;
+        }
+    })
     return (
         !result.data ? (
             <h2 style={{paddingTop: "100px"}}>
@@ -55,6 +85,17 @@ const Edit = (props) => {
         ) : (
             <div style={{paddingTop: "100px"}}>
                 <Typography variant="h5">{props.edit.bookCode}</Typography>
+                {Object.keys(aghast).length > 0 && <Slate
+                    editor={slateEditor}
+                    value={aghast}
+                    onChange={newValue => {
+                        console.log(newValue);
+                        setAghast(newValue);
+                    }}
+                 >
+                    <Editable renderElement={renderElement} />
+                </Slate>}
+                <hr/>
                 <pre>{JSON.stringify(aghast, null, 2)}</pre>
             </div>
         )
