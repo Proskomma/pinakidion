@@ -24,6 +24,7 @@ const Edit = withStyles(styles)((props) => {
         '      headers { key value }' +
         '      idParts { type parts }' +
         '      tags' +
+        '      mainId' +
         '      sequences {' +
         '        id' +
         '        type' +
@@ -59,6 +60,7 @@ const Edit = withStyles(styles)((props) => {
 
     const slateEditor = React.useMemo(() => withReact(createEditor()), []);
     slateEditor.isInline = (element) => ['mark', 'tokens'].includes(element.type);
+    slateEditor.isVoid = (element) => element === 'mark';
     const renderLeafCallback = React.useCallback(({attributes, children, leaf}) => {
         return renderLeaf(attributes, children, leaf);
     });

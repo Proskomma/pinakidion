@@ -10,6 +10,7 @@ const conf = {
     ['docSetId', null],
     ['documentId', null],
     ['bookCode', null],
+    ['sequenceId', null],
   ],
 };
 

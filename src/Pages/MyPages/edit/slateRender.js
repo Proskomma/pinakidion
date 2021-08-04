@@ -35,8 +35,10 @@ const renderElement = (attributes, children, element) => {
                 "blockTag/q2": {marginLeft: "3em"},
             }
             return <div {...attributes} style={editorParaStyle}>
-                    <span contentEditable={false}
-                          style={{...voidStyle, ...markupStyle, ...blockStyles[element.scope]}}>
+                    <span
+                        contentEditable={false}
+                        style={{...voidStyle, ...markupStyle, ...blockStyles[element.scope]}}
+                    >
                         {element.scope.split('/')[1]}
                     </span>
                 {children}
