@@ -36,11 +36,14 @@ const CVDialog = ({cOrV}) => {
     };
     const handleSubmit = () => {
         const newIssues = [];
-        if (!xre.test(n, xre("^\\d+(-\\d+)?$"))) {
+        if (cOrV === 'verses' && !xre.test(n.trim(), xre("^\\d+(-\\d+)?$"))) {
             newIssues.push("Not a valid verse or verse range");
         }
+        if (cOrV === 'chapter' && !xre.test(n.trim(), xre("^\\d$"))) {
+            newIssues.push("Not a valid chapter");
+        }
         if (newIssues.length === 0) {
-            addCV(editor, cOrV, n, editorSelection);
+            addCV(editor, cOrV, n.trim(), editorSelection);
             setOpen(false);
         }
         setIssues(newIssues);
@@ -59,7 +62,7 @@ const CVDialog = ({cOrV}) => {
             {cOrV}
         </Button>
         <Dialog onClose={handleClose} aria-labelledby="cv-dialog-title" open={open}>
-            <DialogTitle id="cv-dialog-title">{`${cOrV}}`}</DialogTitle>
+            <DialogTitle id="cv-dialog-title">{`${cOrV}`}</DialogTitle>
             <DialogContent>
                 {
                     issues.length > 0 &&
@@ -69,7 +72,7 @@ const CVDialog = ({cOrV}) => {
                     autoFocus
                     margin="dense"
                     id="n"
-                    label="Number/Range"
+                    label={cOrV === 'chapter' ? 'Number' : 'Number/Range'}
                     type="text"
                     onChange={e => setN(e.target.value)}
                     value={n}

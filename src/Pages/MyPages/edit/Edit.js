@@ -1,12 +1,17 @@
 import React from 'react';
+import Container from '@material-ui/core/Container';
+import Grid from '@material-ui/core/Grid';
+import {withStyles} from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import {createEditor} from 'slate';
 import {Editable, Slate, withReact} from 'slate-react';
 import aghastModel from "proskomma-render-aghast";
 import EditorToolbar from "./EditorToolbox";
 import {renderElement, renderLeaf} from "./slateRender";
+import styles from '../../../global_styles';
 
-const Edit = (props) => {
+const Edit = withStyles(styles)((props) => {
+    const {classes} = props;
     const [result, setResult] = React.useState({});
     const [aghast, setAghast] = React.useState({});
     const editQueryTemplate = '{' +
@@ -60,37 +65,45 @@ const Edit = (props) => {
     const renderElementCallback = React.useCallback(({attributes, children, element}) => {
         return renderElement(attributes, children, element);
     });
-
+    const idParts = result.data && result.data.docSets[0].documents.filter(d => d.id = props.edit.documentId)[0].idParts.parts;
     return (
-        !result.data ? (
-            <h2 style={{paddingTop: "100px"}}>
-                Loading...
-            </h2>
-        ) : (
-            <div style={{paddingTop: "100px"}}>
-                <Typography variant="h5">{props.edit.bookCode}</Typography>
-                {
-                    Object.keys(aghast).length > 0 &&
-                    <Slate
-                        editor={slateEditor}
-                        value={aghast}
-                        onChange={newValue => {
-                            setAghast(newValue);
-                        }}
-                    >
-                        <EditorToolbar/>
-                        <Editable
-                            renderElement={renderElementCallback}
-                            renderLeaf={renderLeafCallback}
-                        />
-                    </Slate>
-                }
-                <hr/>
-                <pre
-                    style={{fontSize: "xx-small"}}>{Object.keys(aghast).length > 0 && JSON.stringify(aghast[0].children, null, 2)}</pre>
-            </div>
-        )
+        <>
+            <div className={classes.toolbarMargin}/>
+            {!result.data ? (
+                <Typography variant="h2" className={classes.loading}>
+                    Loading...
+                </Typography>
+            ) : (
+                <Container className={classes.page}>
+                    <Grid xs={12}>
+                        <Typography variant="h5">{`${idParts[0]} - ${idParts[1]} (${props.edit.docSetId})`}</Typography>
+                    </Grid>
+                    {
+                        Object.keys(aghast).length > 0 &&
+                            <Grid xs={12}>
+                        <Slate
+                            editor={slateEditor}
+                            value={aghast}
+                            onChange={newValue => {
+                                setAghast(newValue);
+                            }}
+                        >
+                            <EditorToolbar/>
+                            <Editable
+                                renderElement={renderElementCallback}
+                                renderLeaf={renderLeafCallback}
+                            />
+                        </Slate>
+                            </Grid>
+                    }
+                    <hr/>
+                    <pre
+                        style={{fontSize: "xx-small"}}>{Object.keys(aghast).length > 0 && JSON.stringify(aghast[0].children, null, 2)}</pre>
+                </Container>
+            )
+            }
+        </>
     )
-};
+});
 
 export default Edit;
