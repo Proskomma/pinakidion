@@ -14,6 +14,7 @@ const Edit = withStyles(styles)((props) => {
     const {classes} = props;
     const [result, setResult] = React.useState({});
     const [aghast, setAghast] = React.useState({});
+    const [sequences, setSequences] = React.useState([]);
     const editQueryTemplate = '{' +
         '  docSets(withTags:["draft"] ids:"%docSetId%") {' +
         '    id' +
@@ -24,7 +25,7 @@ const Edit = withStyles(styles)((props) => {
         '      headers { key value }' +
         '      idParts { type parts }' +
         '      tags' +
-        '      mainId' +
+        '      mainSequence { id }' +
         '      sequences {' +
         '        id' +
         '        type' +
@@ -50,13 +51,32 @@ const Edit = withStyles(styles)((props) => {
             }
             setResult(res);
             if (res.data) {
-                const config = {};
+                const document = res.data.docSets[0].documents.filter(d => d.id === props.edit.documentId)[0];
+                const newSequences = [];
+                const nextSequence = {};
+                for (const sequence of document.sequences) {
+                    if (sequence.type in nextSequence) {
+                        nextSequence[sequence.type]++;
+                    } else {
+                        nextSequence[sequence.type] = 1;
+                    }
+                    newSequences.push([`${sequence.type} ${nextSequence[sequence.type]}`, `${sequence.id}`]);
+                }
+                setSequences(newSequences);
+                const config = {sequenceId: props.edit.sequenceId};
                 const model = aghastModel(res.data, config);
-                model.render();
-                setAghast([config.aghast]);
+                model.render({
+                    actions: {},
+                    docSet: props.edit.docSetId,
+                    document: props.edit.documentId,
+                }
+        );
+                if (config.aghast.children.length > 0) {
+                    setAghast([config.aghast]);
+                }
             }
         });
-    }, [props.pk, props.edit]);
+    }, [props.pk, props.edit.docSetId, props.edit.documentId, props.edit.bookCode, props.edit.sequenceId]);
 
     const slateEditor = React.useMemo(() => withReact(createEditor()), []);
     slateEditor.isInline = (element) => ['mark', 'tokens'].includes(element.type);
@@ -67,7 +87,7 @@ const Edit = withStyles(styles)((props) => {
     const renderElementCallback = React.useCallback(({attributes, children, element}) => {
         return renderElement(attributes, children, element);
     });
-    const idParts = result.data && result.data.docSets[0].documents.filter(d => d.id = props.edit.documentId)[0].idParts.parts;
+    const idParts = result.data && result.data.docSets[0].documents.filter(d => d.id === props.edit.documentId)[0].idParts.parts;
     return (
         <>
             <div className={classes.toolbarMargin}/>
@@ -77,12 +97,12 @@ const Edit = withStyles(styles)((props) => {
                 </Typography>
             ) : (
                 <Container className={classes.page}>
-                    <Grid xs={12}>
+                    <Grid item xs={12}>
                         <Typography variant="h5">{`${idParts[0]} - ${idParts[1]} (${props.edit.docSetId})`}</Typography>
                     </Grid>
                     {
                         Object.keys(aghast).length > 0 &&
-                        <Grid xs={12}>
+                        <Grid item xs={12}>
                             <Slate
                                 editor={slateEditor}
                                 value={aghast}
@@ -90,7 +110,11 @@ const Edit = withStyles(styles)((props) => {
                                     setAghast(newValue);
                                 }}
                             >
-                                <EditorToolbar/>
+                                <EditorToolbar
+                                    sequences={sequences}
+                                    selectedSequence={props.edit.sequenceId}
+                                    setSelectedSequence={props.edit.setSequenceId}
+                                />
                                 <Editable
                                     renderElement={renderElementCallback}
                                     renderLeaf={renderLeafCallback}

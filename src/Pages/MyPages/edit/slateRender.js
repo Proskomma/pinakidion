@@ -23,7 +23,10 @@ const renderElement = (attributes, children, element) => {
     }
     switch (element.type) {
         case 'blockGraft':
-            return <div {...attributes} style={editorParaStyle}>
+            return <div
+                {...attributes}
+                style={editorParaStyle}
+            >
                 <div contentEditable={false} style={{...voidStyle, ...blockGraftStyle}}>
                     {children}
                 </div>

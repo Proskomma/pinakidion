@@ -1,5 +1,7 @@
 import Grid from '@material-ui/core/Grid';
 import Button from "@material-ui/core/Button";
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
 import {Editor, Element as SlateElement, Transforms} from "slate";
 import {useSlate} from "slate-react";
 import CVDialog from "./CVDialog";
@@ -64,21 +66,67 @@ const NestedButton = ({format}) => {
     </Button>;
 };
 
+const SequenceMenu = props => {
+    const [anchorEl, setAnchorEl] = React.useState(null);
+
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+
+    return (
+        <div>
+            <Button aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick}>
+                {props.sequences.filter(s => s[1] === props.selectedSequence)[0][0]}
+            </Button>
+            <Menu
+                id="simple-menu"
+                anchorEl={anchorEl}
+                keepMounted
+                open={Boolean(anchorEl)}
+                onClose={handleClose}
+            >
+                {
+                    props.sequences.map(
+                        (s, i) =>
+                            <MenuItem key={i} onClick={
+                                () => {
+                                    props.setSelectedSequence(s[1]);
+                                    setAnchorEl(null);
+                                }
+                            }>{s[0]}</MenuItem>
+                    )
+                }
+            </Menu>
+        </div>
+    );
+}
+
 const EditorToolbar = withStyles(styles)((props) => {
     // const {classes} = props;
     return <Grid container>
-        <Grid container justify="flex-start" xs={12} md={4}>
+        <Grid container justify="flex-start" xs={3}>
             <BlockButton format="blockTag/p"/>
             <BlockButton format="blockTag/q"/>
             <BlockButton format="blockTag/q2"/>
         </Grid>
-        <Grid container justify="center" xs={12} md={4}>
+        <Grid container justify="center" xs={3}>
             <CVDialog cOrV="chapter"/>
             <CVDialog cOrV="verses"/>
         </Grid>
-        <Grid container justify="flex-end" xs={12} md={4}>
+        <Grid container justify="center" xs={3}>
             <NestedButton format="nd"/>
             <NestedButton format="add"/>
+        </Grid>
+        <Grid container justify="flex-end" xs={3}>
+            <SequenceMenu
+                sequences={props.sequences}
+                selectedSequence={props.selectedSequence}
+                setSelectedSequence={props.setSelectedSequence}
+            />
         </Grid>
     </Grid>;
 });

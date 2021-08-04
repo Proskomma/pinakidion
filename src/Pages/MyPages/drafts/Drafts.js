@@ -278,9 +278,11 @@ const Drafts = withStyles(styles)((props) => {
         'selectors { name regex }\n' +
         '  docSets(withTags:["draft"]) {\n' +
         '    id\n' +
-        '    documents { id' +
-        '    bookCode: header(id:"bookCode")' +
-        '    name: header(id:"toc2")}\n' +
+        '    documents { id\n' +
+        '        mainSequence { id }\n' +
+        '        bookCode: header(id:"bookCode")\n' +
+        '        name: header(id:"toc2")' +
+        '    }\n' +
         '  }\n' +
         '}\n';
     React.useEffect(() => {
@@ -317,6 +319,7 @@ const Drafts = withStyles(styles)((props) => {
                                                 props.edit.setDocSetId(ds.id);
                                                 props.edit.setDocumentId(d.id);
                                                 props.edit.setBookCode(d.bookCode);
+                                                props.edit.setSequenceId(d.mainSequence.id);
                                                 props.app.setUrl('edit');
                                             }
                                         }>
