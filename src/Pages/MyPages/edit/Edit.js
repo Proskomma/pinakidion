@@ -16,11 +16,11 @@ const Edit = withStyles(styles)((props) => {
     const [aghast, setAghast] = React.useState({});
     const [sequences, setSequences] = React.useState([]);
     const editQueryTemplate = '{' +
-        '  docSets(withTags:["draft"] ids:"%docSetId%") {' +
+        '  docSets(ids:"%docSetId%") {' +
         '    id' +
         '    selectors { key value }' +
         '    tags' +
-        '    documents {' +
+        '    documents(ids:"%documentId%") {' +
         '      id' +
         '      headers { key value }' +
         '      idParts { type parts }' +
@@ -43,6 +43,7 @@ const Edit = withStyles(styles)((props) => {
         const doQuery = async () => {
             const editQuery = editQueryTemplate
                 .replace(/%docSetId%/g, props.edit.docSetId)
+                .replace(/%documentId%/g, props.edit.documentId)
             return await props.pk.gqlQuery(editQuery);
         };
         doQuery().then((res) => {

@@ -276,7 +276,7 @@ const Drafts = withStyles(styles)((props) => {
     };
     const draftsQuery = '{\n' +
         'selectors { name regex }\n' +
-        '  docSets(withTags:["draft"]) {\n' +
+        '  docSets {\n' +
         '    id\n' +
         '    documents { id\n' +
         '        mainSequence { id }\n' +
