@@ -66,7 +66,9 @@ const CVDialog = ({cOrV}) => {
             <DialogContent>
                 {
                     issues.length > 0 &&
-                    <DialogContentText style={{color: 'red'}}>{issues.join('; ')}</DialogContentText>
+                    <DialogContentText style={{color: 'red'}}>
+                        {issues.join('; ')}
+                    </DialogContentText>
                 }
                 <TextField
                     autoFocus

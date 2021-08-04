@@ -24,7 +24,9 @@ const renderElement = (attributes, children, element) => {
     switch (element.type) {
         case 'blockGraft':
             return <div {...attributes} style={editorParaStyle}>
-                <div contentEditable={false} style={{...voidStyle, ...blockGraftStyle}}>{children}</div>
+                <div contentEditable={false} style={{...voidStyle, ...blockGraftStyle}}>
+                    {children}
+                </div>
             </div>;
         case 'block':
             const blockStyles = {
@@ -34,15 +36,21 @@ const renderElement = (attributes, children, element) => {
             }
             return <div {...attributes} style={editorParaStyle}>
                     <span contentEditable={false}
-                          style={{...voidStyle, ...markupStyle, ...blockStyles[element.scope]}}>{element.scope.split('/')[1]}</span>
+                          style={{...voidStyle, ...markupStyle, ...blockStyles[element.scope]}}>
+                        {element.scope.split('/')[1]}
+                    </span>
                 {children}
             </div>;
         case 'mark':
             return <span {...attributes}>
-                    <span contentEditable={false} style={{...voidStyle, ...markupStyle}}>{children}</span>
+                    <span contentEditable={false} style={{...voidStyle, ...markupStyle}}>
+                        {children}
+                    </span>
                 </span>;
         default:
-            return <span {...attributes}>{children}</span>;
+            return <span {...attributes}>
+                {children}
+            </span>;
     }
 };
 
@@ -59,4 +67,4 @@ const renderLeaf = (attributes, children, leaf) => {
         </span>
 };
 
-export { renderElement, renderLeaf };
+export {renderElement, renderLeaf};

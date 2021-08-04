@@ -80,25 +80,27 @@ const Edit = withStyles(styles)((props) => {
                     </Grid>
                     {
                         Object.keys(aghast).length > 0 &&
-                            <Grid xs={12}>
-                        <Slate
-                            editor={slateEditor}
-                            value={aghast}
-                            onChange={newValue => {
-                                setAghast(newValue);
-                            }}
-                        >
-                            <EditorToolbar/>
-                            <Editable
-                                renderElement={renderElementCallback}
-                                renderLeaf={renderLeafCallback}
-                            />
-                        </Slate>
-                            </Grid>
+                        <Grid xs={12}>
+                            <Slate
+                                editor={slateEditor}
+                                value={aghast}
+                                onChange={newValue => {
+                                    setAghast(newValue);
+                                }}
+                            >
+                                <EditorToolbar/>
+                                <Editable
+                                    renderElement={renderElementCallback}
+                                    renderLeaf={renderLeafCallback}
+                                />
+                            </Slate>
+                        </Grid>
                     }
                     <hr/>
                     <pre
-                        style={{fontSize: "xx-small"}}>{Object.keys(aghast).length > 0 && JSON.stringify(aghast[0].children, null, 2)}</pre>
+                        style={{fontSize: "xx-small"}}>
+                        {Object.keys(aghast).length > 0 && JSON.stringify(aghast[0].children, null, 2)}
+                    </pre>
                 </Container>
             )
             }
