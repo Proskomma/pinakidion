@@ -1,6 +1,10 @@
 import React from 'react';
 import {withStyles} from '@material-ui/core/styles';
+import Container from '@material-ui/core/Container';
+import Typography from "@material-ui/core/Typography";
 import Button from '@material-ui/core/Button';
+import Fab from '@material-ui/core/Fab';
+import AddIcon from '@material-ui/icons/Add';
 import TextField from '@material-ui/core/TextField';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -298,12 +302,14 @@ const Drafts = withStyles(styles)((props) => {
         });
     }, [props.pk, props.app.nMutations]);
     return (
-        !result.data ? (
-            <h2>
-                Loading...
-            </h2>
-        ) : (<>
-                <div style={{paddingTop: "100px"}}>
+        <>
+            <div className={classes.toolbarMargin}/>
+            {!result.data ? (
+                <Typography variant="h2" className={classes.loading}>
+                    Loading...
+                </Typography>
+            ) : (
+                <Container className={classes.page}>
                     <List>
                         {result.data && result.data.docSets.map((ds, index) => (
                             <ListItem
@@ -311,29 +317,37 @@ const Drafts = withStyles(styles)((props) => {
                                 button
                                 dense
                                 onClick={() => selectedDraft === ds.id ? setSelectedDraft('') : setSelectedDraft(ds.id)}>
-                                <ListItemText primary={`${ds.id} ${ds.isDraft ? '(draft)' : '(read only)'}`} secondary={selectedDraft === ds.id ? <List>
-                                    {ds.documents.map(d => <ListItem
-                                        key={d.id}
-                                        onClick={
-                                            e => {
-                                                e.stopPropagation();
-                                                props.edit.setDocSetId(ds.id);
-                                                props.edit.setDocumentId(d.id);
-                                                props.edit.setBookCode(d.bookCode);
-                                                props.edit.setSequenceId(d.mainSequence.id);
-                                                props.app.setUrl('edit');
-                                            }
-                                        }>
-                                        {d.bookCode}
-                                    </ListItem>)}
-                                </List> : ''}/>
+                                <ListItemText primary={`${ds.id} ${ds.isDraft ? '(draft)' : '(read only)'}`}
+                                              secondary={selectedDraft === ds.id ? <List>
+                                                  {ds.documents.map(d => <ListItem
+                                                      key={d.id}
+                                                      onClick={
+                                                          e => {
+                                                              e.stopPropagation();
+                                                              props.edit.setDocSetId(ds.id);
+                                                              props.edit.setDocumentId(d.id);
+                                                              props.edit.setBookCode(d.bookCode);
+                                                              props.edit.setSequenceId(d.mainSequence.id);
+                                                              props.app.setUrl('edit');
+                                                          }
+                                                      }>
+                                                      {d.bookCode}
+                                                  </ListItem>)}
+                                              </List> : ''}/>
                             </ListItem>
                         ))}
                     </List>
-                    <Button variant="outlined" color="primary" onClick={handleClickOpen}
-                            className={classes.newDocSetButton}>
-                        New DocSet
-                    </Button>
+                    <Fab
+                        color="primary"
+                        aria-label="add"
+                        style={{position: 'absolute',
+                            top: "100px",
+                            right: "20px",
+                        }}
+                        onClick={handleClickOpen}
+                    >
+                        <AddIcon />
+                    </Fab>
                     <Dialog open={newOpen} onClose={handleClose} aria-labelledby="form-dialog-title">
                         <DialogTitle id="form-dialog-title">New DocSet</DialogTitle>
                         <DialogContent>
@@ -422,9 +436,10 @@ const Drafts = withStyles(styles)((props) => {
                             </Button>
                         </DialogActions>
                     </Dialog>
-                </div>
-            </>
-        )
+                </Container>
+            )
+            }
+        </>
     )
 });
 

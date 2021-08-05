@@ -107,7 +107,7 @@ const SequenceMenu = props => {
 
 const EditorToolbar = withStyles(styles)((props) => {
     // const {classes} = props;
-    return <Grid container>
+    return <Grid container style={{paddingTop:"10px", paddingBottom:"10px"}}>
         <Grid container justify="flex-start" xs={3}>
             <BlockButton format="blockTag/p"/>
             <BlockButton format="blockTag/q"/>

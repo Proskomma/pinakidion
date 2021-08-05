@@ -1,10 +1,10 @@
 import Drafts from './Drafts';
 
 const conf = {
-  url: "drafts",
-  menuEntry: "Drafts",
-  pageTitle: "Draft DocSets",
-  description: "Draft DocSets",
+  url: "editing",
+  menuEntry: "Editing",
+  pageTitle: "Editing",
+  description: "Editing",
   pageClass: Drafts,
 };
 

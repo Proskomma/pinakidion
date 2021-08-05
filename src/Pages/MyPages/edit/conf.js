@@ -2,7 +2,7 @@ import Edit from './Edit';
 
 const conf = {
   url: "edit",
-  menuEntry: "Edit",
+  menuEntry: "",
   pageTitle: "Scripture Editor",
   description: "A Scripture Editor",
   pageClass: Edit,

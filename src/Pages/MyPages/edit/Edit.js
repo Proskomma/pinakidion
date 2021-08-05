@@ -99,8 +99,9 @@ const Edit = withStyles(styles)((props) => {
                 </Typography>
             ) : (
                 <Container className={classes.page}>
-                    <Grid item xs={12}>
-                        <Typography variant="h5">{`${idParts[0]} - ${idParts[1]} (${props.edit.docSetId})`}</Typography>
+                    <Grid container justify="center" xs={12}>
+                        <Typography variant="h4">{`${idParts[0]} - ${props.edit.docSetId}`}</Typography>
+                        <Typography variant="subtitle2">{idParts[1]}</Typography>
                     </Grid>
                     {
                         Object.keys(aghast).length > 0 &&

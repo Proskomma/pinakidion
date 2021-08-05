@@ -103,7 +103,10 @@ const App = withStyles(styles)(props => {
                         open={Boolean(menuAnchor)}
                         onClose={clearAnchor}
                     >
-                        {pagesArray.map(
+                        {
+                            pagesArray
+                                .filter(pe => pe.menuEntry.length > 0)
+                                .map(
                             p =>
                                 <MenuItem
                                     component="div"
@@ -117,7 +120,8 @@ const App = withStyles(styles)(props => {
                                 >
                                     {p.menuEntry}
                                 </MenuItem>
-                        )}
+                        )
+                        }
                     </Menu>
                     <Typography variant="title">
                         {pages[sharedState.app.url || 'about'].pageTitle}
