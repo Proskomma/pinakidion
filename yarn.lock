@@ -12196,10 +12196,10 @@ property-information@^5.0.0, property-information@^5.3.0:
   dependencies:
     xtend "^4.0.0"
 
-proskomma-render-aghast@^0.5.9:
-  version "0.5.9"
-  resolved "https://registry.yarnpkg.com/proskomma-render-aghast/-/proskomma-render-aghast-0.5.9.tgz#c6821c44101cc720af4ea976267e4546bcf6ad64"
-  integrity sha512-zLTfbf06MgGkW+HxFLOnMgCaxFZyo/S5pGgFkF1deeRnUtcsvUCMQEqR+X/B9Alh4RLGBhXUPffETo/yNdHHdQ==
+proskomma-render-aghast@^0.5.10:
+  version "0.5.10"
+  resolved "https://registry.yarnpkg.com/proskomma-render-aghast/-/proskomma-render-aghast-0.5.10.tgz#5822f11e0d7dbb9dcec6a25a1f9daaba45dc0b6f"
+  integrity sha512-ApkpzoUpXoE/BxhVR74K8tmJ4Bdbk4Voiz0q6PTRR1QHJ2yY9pqgVjbbwDr1R2sZY2lKUnjpzd6wIof9+4HqOA==
   dependencies:
     proskomma-render "^0.5.2"
 

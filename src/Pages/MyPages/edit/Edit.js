@@ -19,6 +19,7 @@ const Edit = withStyles(styles)((props) => {
         '  docSets(ids:"%docSetId%") {' +
         '    id' +
         '    selectors { key value }' +
+        '    isDraft: hasTag(tagName:"draft")' +
         '    tags' +
         '    documents(ids:"%documentId%") {' +
         '      id' +
@@ -117,6 +118,7 @@ const Edit = withStyles(styles)((props) => {
                                     setSelectedSequence={props.edit.setSequenceId}
                                 />
                                 <Editable
+                                    readOnly={!result.data.docSets[0].isDraft}
                                     renderElement={renderElementCallback}
                                     renderLeaf={renderLeafCallback}
                                 />

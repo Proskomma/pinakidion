@@ -278,6 +278,7 @@ const Drafts = withStyles(styles)((props) => {
         'selectors { name regex }\n' +
         '  docSets {\n' +
         '    id\n' +
+        '    isDraft: hasTag(tagName:"draft")' +
         '    documents { id\n' +
         '        mainSequence { id }\n' +
         '        bookCode: header(id:"bookCode")\n' +
@@ -310,7 +311,7 @@ const Drafts = withStyles(styles)((props) => {
                                 button
                                 dense
                                 onClick={() => selectedDraft === ds.id ? setSelectedDraft('') : setSelectedDraft(ds.id)}>
-                                <ListItemText primary={ds.id} secondary={selectedDraft === ds.id ? <List>
+                                <ListItemText primary={`${ds.id} ${ds.isDraft ? '(draft)' : '(read only)'}`} secondary={selectedDraft === ds.id ? <List>
                                     {ds.documents.map(d => <ListItem
                                         key={d.id}
                                         onClick={

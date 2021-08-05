@@ -15,6 +15,12 @@ const renderElement = (attributes, children, element) => {
         paddingTop: "5px",
         paddingBottom: "5px",
     }
+    const inlineGraftStyle = {
+        color: "#FFF",
+        backgroundColor: "#999",
+        paddingLeft: "0.25em",
+        paddingRight: "0.25em",
+    }
     const markupStyle = {
         fontSize: "x-small",
     }
@@ -31,6 +37,14 @@ const renderElement = (attributes, children, element) => {
                     {children}
                 </div>
             </div>;
+        case 'inlineGraft':
+            return <span
+                {...attributes}
+            >
+                <span contentEditable={false} style={{...voidStyle, ...inlineGraftStyle}}>
+                    {children}
+                </span>
+            </span>;
         case 'block':
             const blockStyles = {
                 "blockTag/p": {},
