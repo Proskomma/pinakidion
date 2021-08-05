@@ -68,11 +68,11 @@ const Edit = withStyles(styles)((props) => {
                 const config = {sequenceId: props.edit.sequenceId};
                 const model = aghastModel(res.data, config);
                 model.render({
-                    actions: {},
-                    docSet: props.edit.docSetId,
-                    document: props.edit.documentId,
-                }
-        );
+                        actions: {},
+                        docSet: props.edit.docSetId,
+                        document: props.edit.documentId,
+                    }
+                );
                 if (config.aghast.children.length > 0) {
                     setAghast([config.aghast]);
                 }
@@ -101,6 +101,8 @@ const Edit = withStyles(styles)((props) => {
                 <Container className={classes.page}>
                     <Grid container justify="center" xs={12}>
                         <Typography variant="h4">{`${idParts[0]} - ${props.edit.docSetId}`}</Typography>
+                    </Grid>
+                    <Grid container justify="center" xs={12}>
                         <Typography variant="subtitle2">{idParts[1]}</Typography>
                     </Grid>
                     {
