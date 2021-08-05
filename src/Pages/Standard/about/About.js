@@ -3,9 +3,6 @@ import React from 'react';
 import {withStyles} from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
 
 import styles from '../../../global_styles';
 import InspectQuery from "../../../sharedComponents/InspectQuery";
@@ -18,13 +15,6 @@ const About = withStyles(styles)((props) => {
     const aboutQuery =
         '{' +
         '  processor packageVersion' +
-        '  nDocSets nDocuments\n' +
-        '  docSets(withoutTags:["draft"]) {\n' +
-        '    id\n' +
-        '    documents { id' +
-        '    bookCode: header(id:"bookCode")' +
-        '    name: header(id:"toc2")}\n' +
-        '  }\n' +
         '}\n';
     React.useEffect(() => {
         const doQuery = async () => {
@@ -55,17 +45,7 @@ const About = withStyles(styles)((props) => {
                         <Typography variant="body1" className={classes.docSetsSection}>
                             {packageJson.description}
                         </Typography>
-                        <Typography variant="h5" className={classes.docSetsSection}>
-                            Reference Texts
-                        </Typography>
-                        <List>
-                            {result.data.docSets.map((ds, index) => (
-                                <ListItem key={index} button dense>
-                                    <ListItemText primary={ds.id} secondary={`${ds.documents.length} books`}/>
-                                </ListItem>
-                            ))}
-                        </List>
-                        <Typography variant="body2" className={classes.docSetsSection}>
+                         <Typography variant="body2" className={classes.docSetsSection}>
                             {packageJson.homepage}
                         </Typography>
                         <Typography variant="body2" className={classes.docSetsSection}>

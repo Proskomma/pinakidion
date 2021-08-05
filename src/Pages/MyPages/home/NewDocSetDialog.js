@@ -103,12 +103,12 @@ const NewDocSetDialog = (props) => {
     }
 
     return <Dialog open={props.newOpen} onClose={handleClose} aria-labelledby="form-dialog-title">
-        <DialogTitle id="form-dialog-title">New DocSet</DialogTitle>
+        <DialogTitle id="form-dialog-title">New Translation</DialogTitle>
         <DialogContent>
             {issues.length > 0 ?
                 <DialogContentText style={{color: 'red'}}>{issues.join('; ')}</DialogContentText> :
                 <DialogContentText>
-                    This form will create a new docSet with a number of empty documents.
+                    Create a new translation with a number of empty book documents.
                 </DialogContentText>}
             <TextField
                 autoFocus

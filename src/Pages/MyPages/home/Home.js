@@ -11,7 +11,7 @@ import styles from "../../../global_styles";
 
 import NewDocSetDialog from "./NewDocSetDialog";
 
-const Drafts = withStyles(styles)((props) => {
+const Home = withStyles(styles)((props) => {
     const {classes} = props;
     const [result, setResult] = React.useState({});
     const [newOpen, setNewOpen] = React.useState(false);
@@ -105,4 +105,4 @@ const Drafts = withStyles(styles)((props) => {
     )
 });
 
-export default Drafts;
+export default Home;

@@ -27,16 +27,16 @@ const translationSources = [
 ].map((ts) => path.resolve(ts));
 
 const draftSources =
-    (fse.existsSync('./data/drafts') ?
-        fse.readdirSync('./data/drafts').filter(f => f.endsWith('_pkserialized.json')) :
+    (fse.existsSync('./data/home') ?
+        fse.readdirSync('./data/home').filter(f => f.endsWith('_pkserialized.json')) :
         [])
-        .map((ts) => path.resolve('./data/drafts', ts));
+        .map((ts) => path.resolve('./data/home', ts));
 const styles = theme => ({});
 
 const App = withStyles(styles)(props => {
     const {classes} = props;
     const [menuAnchor, setMenuAnchor] = useState(null);
-    [sharedState.app.url, sharedState.app.setUrl] = useState('about');
+    [sharedState.app.url, sharedState.app.setUrl] = useState('home');
     [sharedState.app.docSets, sharedState.app.setDocSets] = useState([]);
     [sharedState.app.nMutations, sharedState.app.setNMutations] = useState(0);
     for (const [sName, sStates] of Object.entries(stateSpec)) {
@@ -124,7 +124,7 @@ const App = withStyles(styles)(props => {
                         }
                     </Menu>
                     <Typography variant="title">
-                        {pages[sharedState.app.url || 'about'].pageTitle}
+                        {pages[sharedState.app.url || 'home'].pageTitle}
                     </Typography>
                 </ToolBar>
             </AppBar>

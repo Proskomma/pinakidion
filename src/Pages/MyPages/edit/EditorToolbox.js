@@ -108,20 +108,21 @@ const SequenceMenu = props => {
 const EditorToolbar = withStyles(styles)((props) => {
     // const {classes} = props;
     return <Grid container style={{paddingTop:"10px", paddingBottom:"10px"}}>
-        <Grid container justify="flex-start" xs={3}>
+        <Grid container justify="flex-start" xs={6} md={3}>
             <BlockButton format="blockTag/p"/>
+            <BlockButton format="blockTag/m"/>
             <BlockButton format="blockTag/q"/>
             <BlockButton format="blockTag/q2"/>
         </Grid>
-        <Grid container justify="center" xs={3}>
+        <Grid container justify="center" xs={6} md={3}>
             <CVDialog cOrV="chapter"/>
             <CVDialog cOrV="verses"/>
         </Grid>
-        <Grid container justify="center" xs={3}>
+        <Grid container justify="center" xs={6} md={3}>
             <NestedButton format="nd"/>
             <NestedButton format="add"/>
         </Grid>
-        <Grid container justify="flex-end" xs={3}>
+        <Grid container justify="flex-end" xs={6} md={3}>
             <SequenceMenu
                 sequences={props.sequences}
                 selectedSequence={props.selectedSequence}

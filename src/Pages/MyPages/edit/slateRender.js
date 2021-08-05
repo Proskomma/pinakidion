@@ -47,14 +47,15 @@ const renderElement = (attributes, children, element) => {
             </span>;
         case 'block':
             const blockStyles = {
-                "blockTag/p": {},
+                "blockTag/p": {textIndent: "0.5em"},
+                "blockTag/m": {textIndent: "0em"},
                 "blockTag/q": {marginLeft: "1.5em"},
                 "blockTag/q2": {marginLeft: "3em"},
             }
-            return <div {...attributes} style={editorParaStyle}>
+            return <div {...attributes} style={{...editorParaStyle, ...blockStyles[element.scope]}}>
                     <span
                         contentEditable={false}
-                        style={{...voidStyle, ...markupStyle, ...blockStyles[element.scope]}}
+                        style={{...voidStyle, ...markupStyle}}
                     >
                         {element.scope.split('/')[1]}
                     </span>
