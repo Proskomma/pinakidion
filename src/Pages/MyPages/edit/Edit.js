@@ -9,12 +9,15 @@ import aghastModel from "proskomma-render-aghast";
 import EditorToolbar from "./EditorToolbox";
 import {renderElement, renderLeaf} from "./slateRender";
 import styles from '../../../global_styles';
+import Button from "@material-ui/core/Button";
 
 const Edit = withStyles(styles)((props) => {
     const {classes} = props;
     const [result, setResult] = React.useState({});
     const [aghast, setAghast] = React.useState({});
+    const [edited, setEdited] = React.useState(false);
     const [sequences, setSequences] = React.useState([]);
+    const [showAghast, setShowAghast] = React.useState(false);
     const editQueryTemplate = '{' +
         '  docSets(ids:"%docSetId%") {' +
         '    id' +
@@ -80,6 +83,10 @@ const Edit = withStyles(styles)((props) => {
         });
     }, [props.pk, props.edit.docSetId, props.edit.documentId, props.edit.bookCode, props.edit.sequenceId]);
 
+    const saveAghast = () => {
+        console.log("Save AGHAST")
+    }
+
     const slateEditor = React.useMemo(() => withReact(createEditor()), []);
     slateEditor.isInline = (element) => ['mark', 'tokens'].includes(element.type);
     slateEditor.isVoid = (element) => element === 'mark';
@@ -90,6 +97,32 @@ const Edit = withStyles(styles)((props) => {
         return renderElement(attributes, children, element);
     });
     const idParts = result.data && result.data.docSets[0].documents.filter(d => d.id === props.edit.documentId)[0].idParts.parts;
+
+    const ShowAghastButton = ({format}) => {
+        return <Button
+            variant="outlined"
+            size="small"
+            onClick={() => {
+                setShowAghast(!showAghast);
+            }}
+        >
+            Show AGHAST
+        </Button>;
+    }
+
+        const SaveButton = ({format}) => {
+            return <Button
+                variant="outlined"
+                size="small"
+                disabled={!edited}
+                onClick={() => {
+                    saveAghast();
+                    setEdited(false);
+                }}
+            >
+                Save
+            </Button>;
+    };
     return (
         <>
             <div className={classes.toolbarMargin}/>
@@ -124,15 +157,35 @@ const Edit = withStyles(styles)((props) => {
                                     readOnly={!result.data.docSets[0].isDraft}
                                     renderElement={renderElementCallback}
                                     renderLeaf={renderLeafCallback}
+                                    onKeyDown={event => {
+                                        setEdited(true);
+                                    }}
+                                    style={{
+                                        height: '500px',
+                                        paddingLeft: "10px",
+                                        paddingRight: "10px",
+                                        overflowY:'auto',
+                                        backgroundColor: "#EEE",
+                                    }}
                                 />
                             </Slate>
                         </Grid>
                     }
-                    <hr/>
-                    <pre
-                        style={{fontSize: "xx-small"}}>
-                        {Object.keys(aghast).length > 0 && JSON.stringify(aghast[0].children, null, 2)}
-                    </pre>
+                    <Grid container justify="center" xs={12} style={{paddingTop:"10px", paddingBottom:"10px"}}>
+                        <Grid justify="flex-start" xs={6}>
+                        <ShowAghastButton/>
+                        </Grid>
+                        <Grid justify="flex-end" xs={6} style={{textAlign:"right"}}>
+                            <SaveButton/>
+                        </Grid>
+                    </Grid>
+                    <Grid justify="center" xs={12}>
+                        {showAghast && Object.keys(aghast).length > 0 && <pre
+                        style={{fontSize: "xx-small", height: '500px', overflowY:'auto', backgroundColor: "#EEE"}}
+                        >
+                        {JSON.stringify(aghast[0].children, null, 2)}
+                    </pre>}
+                    </Grid>
                 </Container>
             )
             }
