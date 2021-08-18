@@ -15,6 +15,7 @@ const saveAghast = rawAghast => {
     let waitingBlockGrafts = [];
     let currentChapter = null;
     let currentVerses = null;
+    let openScopes = [];
 
     const removeEmptyText = a => {
         return a.map(b => ({...b, children: b.children.filter(c => c.type || (c.text && c.text !== ''))}));
@@ -110,6 +111,23 @@ const saveAghast = rawAghast => {
         const ret = [];
         for (const item of items) {
             if (!item.type && item.text) {
+                const textStyles = Object.keys(item).filter(k => k !== 'text');
+                while (openScopes.filter(s => !(textStyles.includes(s))).length > 0) {
+                    ret.push({
+                        type: 'scope',
+                        subType: 'end',
+                        payload: `charTag/${openScopes[0]}`,
+                    })
+                    openScopes.shift();
+                }
+                for (const newStyle of textStyles.filter(t => !(openScopes.includes(t)))) {
+                    ret.push({
+                        type: 'scope',
+                        subType: 'start',
+                        payload: `charTag/${newStyle}`,
+                    });
+                    openScopes.unshift(newStyle);
+                }
                 const tokenized = tokenizeString(item.text);
                 for (const [tokenText, tokenType] of tokenized) {
                     ret.push({
@@ -138,6 +156,13 @@ const saveAghast = rawAghast => {
                     startVerses(ret, currentVerses);
                 }
             }
+        }
+        for (const openScope of openScopes) {
+            ret.push({
+                type: 'scope',
+                subType: 'end',
+                payload: `charTag/${openScope}`,
+            })
         }
         if (currentVerses) {
             endVerses(ret, currentVerses);
