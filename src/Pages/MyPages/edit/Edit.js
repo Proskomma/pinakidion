@@ -9,7 +9,7 @@ import aghastModel from "proskomma-render-aghast";
 import EditorToolbar from "./EditorToolbox";
 import {renderElement, renderLeaf} from "./slateRender";
 import styles from '../../../global_styles';
-import Button from "@material-ui/core/Button";
+import { SaveButton, ShowAghastButton } from './buttons';
 
 const Edit = withStyles(styles)((props) => {
     const {classes} = props;
@@ -83,55 +83,6 @@ const Edit = withStyles(styles)((props) => {
         });
     }, [props.pk, props.edit.docSetId, props.edit.documentId, props.edit.bookCode, props.edit.sequenceId]);
 
-    const saveAghast = rawAghast => {
-
-        const removeEmptyText = a => {
-            return a.map(b => ({...b, children: b.children.filter(c => c.type || (c.text && c.text !== ''))}));
-        }
-
-        const processItems = items => {
-            const ret = [];
-            for (const item of items) {
-                if (!item.type && item.text) {
-                    for (const [tokenText, tokenType] of [[item.text, 'wordLike']]) {
-                        ret.push({
-                            type: 'token',
-                            subType: tokenType,
-                            payload: tokenText,
-                        })
-                    }
-                } else if (item.type === 'mark') {
-                    ret.push({
-                        type: 'scope',
-                        subType: 'start',
-                        payload: item.scope,
-                    })
-                }
-            }
-            return ret;
-        };
-
-        let aghastSequenceChildren = removeEmptyText(rawAghast[0].children);
-        let blocks = [];
-        let waitingBlockGrafts = [];
-        for (const blockLike of aghastSequenceChildren) {
-            if (blockLike.type === 'blockGraft') {
-                waitingBlockGrafts.push({
-                    type: 'graft',
-                    subType: blockLike.subType,
-                    payload: blockLike.seqId,
-                });
-            } else {
-                blocks.push({
-                    bs: blockLike.scope,
-                    bg: waitingBlockGrafts,
-                    items: processItems(blockLike.children),
-                })
-            }
-        }
-        console.log(JSON.stringify(blocks, null, 2));
-    }
-
     const slateEditor = React.useMemo(() => withReact(createEditor()), []);
     slateEditor.isInline = (element) => ['mark', 'tokens'].includes(element.type);
     slateEditor.isVoid = (element) => element === 'mark';
@@ -143,31 +94,6 @@ const Edit = withStyles(styles)((props) => {
     });
     const idParts = result.data && result.data.docSets[0].documents.filter(d => d.id === props.edit.documentId)[0].idParts.parts;
 
-    const ShowAghastButton = ({format}) => {
-        return <Button
-            variant="outlined"
-            size="small"
-            onClick={() => {
-                setShowAghast(!showAghast);
-            }}
-        >
-            Show AGHAST
-        </Button>;
-    }
-
-        const SaveButton = ({format}) => {
-            return <Button
-                variant="outlined"
-                size="small"
-                disabled={!edited}
-                onClick={() => {
-                    saveAghast(aghast);
-                    setEdited(false);
-                }}
-            >
-                Save
-            </Button>;
-    };
     return (
         <>
             <div className={classes.toolbarMargin}/>
@@ -218,10 +144,10 @@ const Edit = withStyles(styles)((props) => {
                     }
                     <Grid container justify="center" xs={12} style={{paddingTop:"10px", paddingBottom:"10px"}}>
                         <Grid justify="flex-start" xs={6}>
-                        <ShowAghastButton/>
+                        <ShowAghastButton showAghast={showAghast} setShowAghast={setShowAghast}/>
                         </Grid>
                         <Grid justify="flex-end" xs={6} style={{textAlign:"right"}}>
-                            <SaveButton/>
+                            <SaveButton edited={edited} setEdited={setEdited} aghast={aghast}/>
                         </Grid>
                     </Grid>
                     <Grid justify="center" xs={12}>
