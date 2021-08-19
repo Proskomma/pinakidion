@@ -9,7 +9,7 @@ for (const lr of lexingRegexes) {
     }
 }
 
-const saveAghast = rawAghast => {
+const saveAghast = (rawAghast, setToWrite) => {
 
     let blocks = [];
     let waitingBlockGrafts = [];
@@ -29,8 +29,10 @@ const saveAghast = rawAghast => {
                 tokenType = 'wordLike';
             } else if (xre.test(token, tokenTypes['punctuation'])) {
                 tokenType = 'punctuation';
-            } else if (xre.test(token, tokenTypes['lineSpace']) || xre.test(token, tokenTypes['eol'])) {
+            } else if (xre.test(token, tokenTypes['lineSpace']))  {
                 tokenType = 'lineSpace';
+            } else if (xre.test(token, tokenTypes['eol']))  {
+                tokenType = 'eol';
             } else {
                 tokenType = 'unknown';
             }
@@ -183,14 +185,18 @@ const saveAghast = rawAghast => {
             });
         } else {
             blocks.push({
-                bs: blockLike.scope,
+                bs: {
+                    type: 'scope',
+                    subType: 'start',
+                    payload: blockLike.scope,
+                },
                 bg: waitingBlockGrafts,
                 items: processItems(blockLike.children),
             });
             waitingBlockGrafts = [];
         }
     }
-    console.log(JSON.stringify(blocks, null, 2));
+    setToWrite(blocks);
 }
 
 export default saveAghast;

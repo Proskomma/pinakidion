@@ -20,7 +20,7 @@ const SaveButton = (props) => {
         size="small"
         disabled={!props.edited}
         onClick={() => {
-            saveAghast(props.aghast);
+            saveAghast(props.aghast, props.setToWrite);
             props.setEdited(false);
         }}
     >

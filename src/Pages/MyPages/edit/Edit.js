@@ -16,6 +16,7 @@ const Edit = withStyles(styles)((props) => {
     const [result, setResult] = React.useState({});
     const [aghast, setAghast] = React.useState({});
     const [edited, setEdited] = React.useState(false);
+    const [toWrite, setToWrite] = React.useState(null);
     const [sequences, setSequences] = React.useState([]);
     const [showAghast, setShowAghast] = React.useState(false);
     const editQueryTemplate = '{' +
@@ -81,9 +82,32 @@ const Edit = withStyles(styles)((props) => {
                 }
             }
         });
-    }, [props.pk, props.edit.docSetId, props.edit.documentId, props.edit.bookCode, props.edit.sequenceId]);
+    }, [props.pk, props.edit.docSetId, props.edit.documentId, props.edit.bookCode, props.edit.sequenceId, toWrite]);
 
-    const slateEditor = React.useMemo(() => withReact(createEditor()), []);
+    React.useEffect(() => {
+        const object2Query = obs => '[' + obs.map(ob => `{type: "${ob.type}" subType: "${ob.subType}" payload: "${ob.payload}"}`).join(', ') + ']';
+        const oneObject2Query = ob => `{type: "${ob.type}" subType: "${ob.subType}" payload: "${ob.payload}"}`;
+        const blocksSpec2Query = bSpec => '[' + bSpec.map(b => `{bs: ${oneObject2Query(b.bs)}, bg: ${object2Query(b.bg)}, items: ${object2Query(b.items)}}`) + ']';
+        const doQuery = async blocks => {
+            const blockQuery = blocksSpec2Query(blocks);
+            const writeQuery = `mutation { updateAllBlocks(` +
+                `docSetId: "${props.edit.docSetId}"` +
+                ` documentId: "${props.edit.documentId}"` +
+                ` sequenceId: "${props.edit.sequenceId}"` +
+                ` blocksSpec: ${blockQuery}) }`;
+            return await props.pk.gqlQuery(writeQuery);
+        };
+        if (toWrite) {
+            doQuery(toWrite).then((res) => {
+                if (res.errors) {
+                    console.log(res.errors);
+                }
+                setToWrite(null);
+            })
+        }
+    }, [toWrite]);
+
+            const slateEditor = React.useMemo(() => withReact(createEditor()), []);
     slateEditor.isInline = (element) => ['mark', 'tokens'].includes(element.type);
     slateEditor.isVoid = (element) => element === 'mark';
     const renderLeafCallback = React.useCallback(({attributes, children, leaf}) => {
@@ -147,7 +171,7 @@ const Edit = withStyles(styles)((props) => {
                         <ShowAghastButton showAghast={showAghast} setShowAghast={setShowAghast}/>
                         </Grid>
                         <Grid justify="flex-end" xs={6} style={{textAlign:"right"}}>
-                            <SaveButton edited={edited} setEdited={setEdited} aghast={aghast}/>
+                            <SaveButton edited={edited} setEdited={setEdited} aghast={aghast} setToWrite={setToWrite}/>
                         </Grid>
                     </Grid>
                     <Grid justify="center" xs={12}>

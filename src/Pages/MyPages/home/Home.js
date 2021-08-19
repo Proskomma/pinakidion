@@ -42,6 +42,7 @@ const Home = withStyles(styles)((props) => {
                 console.log(res.errors);
             }
             setResult(res);
+            props.app.setDocSets(res.data.docSets);
         });
     }, [props.pk, props.app.nMutations]);
     return (
