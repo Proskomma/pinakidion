@@ -9,7 +9,7 @@ import aghastModel from "proskomma-render-aghast";
 import EditorToolbar from "./EditorToolbox";
 import {renderElement, renderLeaf} from "./slateRender";
 import styles from '../../../global_styles';
-import { SaveButton, ShowAghastButton } from './buttons';
+import { SaveButton, SearchButton, ShowAghastButton } from './buttons';
 
 const Edit = withStyles(styles)((props) => {
     const {classes} = props;
@@ -85,8 +85,9 @@ const Edit = withStyles(styles)((props) => {
     }, [props.pk, props.edit.docSetId, props.edit.documentId, props.edit.bookCode, props.edit.sequenceId, toWrite]);
 
     React.useEffect(() => {
-        const object2Query = obs => '[' + obs.map(ob => `{type: "${ob.type}" subType: "${ob.subType}" payload: "${ob.payload}"}`).join(', ') + ']';
-        const oneObject2Query = ob => `{type: "${ob.type}" subType: "${ob.subType}" payload: "${ob.payload}"}`;
+        const escapePayload = str => str.replace('"', '\\"');
+        const object2Query = obs => '[' + obs.map(ob => `{type: "${ob.type}" subType: "${ob.subType}" payload: "${escapePayload(ob.payload)}"}`).join(', ') + ']';
+        const oneObject2Query = ob => `{type: "${ob.type}" subType: "${ob.subType}" payload: "${escapePayload(ob.payload)}"}`;
         const blocksSpec2Query = bSpec => '[' + bSpec.map(b => `{bs: ${oneObject2Query(b.bs)}, bg: ${object2Query(b.bg)}, items: ${object2Query(b.items)}}`) + ']';
         const doQuery = async blocks => {
             const blockQuery = blocksSpec2Query(blocks);
@@ -156,7 +157,7 @@ const Edit = withStyles(styles)((props) => {
                                         setEdited(true);
                                     }}
                                     style={{
-                                        height: '500px',
+                                        height: '300px',
                                         paddingLeft: "10px",
                                         paddingRight: "10px",
                                         overflowY:'auto',
@@ -167,10 +168,13 @@ const Edit = withStyles(styles)((props) => {
                         </Grid>
                     }
                     <Grid container justify="center" xs={12} style={{paddingTop:"10px", paddingBottom:"10px"}}>
-                        <Grid justify="flex-start" xs={6}>
-                        <ShowAghastButton showAghast={showAghast} setShowAghast={setShowAghast}/>
+                        <Grid justify="flex-start" xs={4}>
+                            <ShowAghastButton showAghast={showAghast} setShowAghast={setShowAghast}/>
                         </Grid>
-                        <Grid justify="flex-end" xs={6} style={{textAlign:"right"}}>
+                        <Grid justify="center" xs={4}>
+                            <SearchButton app={props.app} edit={props.edit} search={props.search}/>
+                        </Grid>
+                        <Grid justify="flex-end" xs={4} style={{textAlign:"right"}}>
                             <SaveButton edited={edited} setEdited={setEdited} aghast={aghast} setToWrite={setToWrite}/>
                         </Grid>
                     </Grid>

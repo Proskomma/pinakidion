@@ -14,6 +14,19 @@ const ShowAghastButton = (props) => {
     </Button>;
 }
 
+const SearchButton = (props) => {
+    return <Button
+        variant="outlined"
+        size="small"
+        onClick={() => {
+            props.search.setDocSetId(props.edit.docSetId);
+            props.app.setUrl('search');
+        }}
+    >
+        Search
+    </Button>;
+};
+
 const SaveButton = (props) => {
     return <Button
         variant="outlined"
@@ -28,4 +41,4 @@ const SaveButton = (props) => {
     </Button>;
 };
 
-export { ShowAghastButton, SaveButton };
+export { ShowAghastButton, SearchButton, SaveButton };

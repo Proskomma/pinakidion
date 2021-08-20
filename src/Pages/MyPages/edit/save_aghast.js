@@ -21,6 +21,10 @@ const saveAghast = (rawAghast, setToWrite) => {
         return a.map(b => ({...b, children: b.children.filter(c => c.type || (c.text && c.text !== ''))}));
     }
 
+    const removeEmptyBlocks = a => {
+        return a.filter(b => b.type === 'blockGraft' || b.children.length > 0);
+    }
+
     const tokenizeString = str => {
         const ret = [];
         for (const token of xre.match(str, mainRegex, 'all')) {
@@ -118,7 +122,7 @@ const saveAghast = (rawAghast, setToWrite) => {
                     ret.push({
                         type: 'scope',
                         subType: 'end',
-                        payload: `charTag/${openScopes[0]}`,
+                        payload: `span/${openScopes[0]}`,
                     })
                     openScopes.shift();
                 }
@@ -126,7 +130,7 @@ const saveAghast = (rawAghast, setToWrite) => {
                     ret.push({
                         type: 'scope',
                         subType: 'start',
-                        payload: `charTag/${newStyle}`,
+                        payload: `span/${newStyle}`,
                     });
                     openScopes.unshift(newStyle);
                 }
@@ -163,7 +167,7 @@ const saveAghast = (rawAghast, setToWrite) => {
             ret.push({
                 type: 'scope',
                 subType: 'end',
-                payload: `charTag/${openScope}`,
+                payload: `span/${openScope}`,
             })
         }
         if (currentVerses) {
@@ -175,7 +179,7 @@ const saveAghast = (rawAghast, setToWrite) => {
         return ret;
     };
 
-    let aghastSequenceChildren = removeEmptyText(rawAghast[0].children);
+    let aghastSequenceChildren = removeEmptyBlocks(removeEmptyText(rawAghast[0].children));
     for (const blockLike of aghastSequenceChildren) {
         if (blockLike.type === 'blockGraft') {
             waitingBlockGrafts.push({

@@ -66,25 +66,24 @@ const regexSearchQueryTemplate =
 
 const Search = withStyles(styles)((props) => {
     const {classes} = props;
-    const [selectedDocSet, setSelectedDocSet] = React.useState(null);
     const [result, setResult] = React.useState({});
     const [resultExpired, setResultExpired] = React.useState(false);
     const [query, setQuery] = React.useState('');
     const [searchTerms, setSearchTerms] = React.useState('');
     const [searchString, setSearchString] = React.useState('');
     const [allChars, setAllChars] = React.useState(false);
-    const [exactMatch, setExactMatch] = React.useState(true);
+    const [exactMatch, setExactMatch] = React.useState(false);
     const [from, setFrom] = React.useState(0);
 
     // Build new query when searchTerms change
     React.useEffect(() => {
-        if (selectedDocSet) {
+        if (props.search.docSetId) {
             const searchTermsArray = searchTerms.split(/ +/).map((st) => st.trim()).filter(st => st.length > 0);
             if (searchTermsArray.length > 0) {
                 if (exactMatch) {
                     setQuery(
                         exactSearchQueryTemplate
-                            .replace(/%docSetId%/g, selectedDocSet)
+                            .replace(/%docSetId%/g, props.search.docSetId)
                             .replace(
                                 /%searchTerms%/g,
                                 searchTermsArray.map((st) => `"${st}"`).join(', ')
@@ -101,7 +100,7 @@ const Search = withStyles(styles)((props) => {
                 } else {
                     setQuery(
                         regexSearchQueryTemplate
-                            .replace(/%docSetId%/g, selectedDocSet)
+                            .replace(/%docSetId%/g, props.search.docSetId)
                             .replace(
                                 /%searchTerms%/g,
                                 searchTermsArray.map((st) => `"${st}"`).join(', ')
@@ -133,7 +132,7 @@ const Search = withStyles(styles)((props) => {
         if (searchTerms.trim().length > 0) {
             doQuery();
         }
-    }, [selectedDocSet, query]);
+    }, [props.search.docSetId, query]);
 
     const handleButtonClick = () => {
         setSearchTerms(searchString);
@@ -194,17 +193,17 @@ const Search = withStyles(styles)((props) => {
             <Container className={classes.page}>
                 <div>
                     <DocSetPicker
-                        selectedDocSet={selectedDocSet}
-                        setSelectedDocSet={setSelectedDocSet}
+                        selectedDocSet={props.search.docSetId}
+                        setSelectedDocSet={props.search.setDocSetId}
                         app={props.app}
                     />
-                    {!selectedDocSet && (
+                    {!props.search.docSetId && (
                         <Typography variant="h5" display="inline" className={classes.requireInput}>Please Select a DocSet</Typography>
                     )}
                     <InspectQuery app={props.app} raw={props.raw} query={query}/>
                 </div>
                 {
-                    selectedDocSet &&
+                    props.search.docSetId &&
                     <div>
                         <TextField
                             className={classes.searchTerms}
@@ -215,7 +214,7 @@ const Search = withStyles(styles)((props) => {
                     </div>
                 }
                 {
-                    selectedDocSet &&
+                    props.search.docSetId &&
                     <div>
                         <FormControlLabel
                             control={
@@ -271,11 +270,6 @@ const Search = withStyles(styles)((props) => {
                                     key={mr[0]}
                                     button
                                     dense
-                                    onClick={() => {
-                                        props.browseChapter.setSelectedBook(mr[1][1]);
-                                        props.browseChapter.setSelectedChapter(mr[1][3][0]);
-                                        props.app.setUrl('browseChapter');
-                                    }}
                                 >
                                     <ListItemText
                                         primary={
@@ -297,7 +291,7 @@ const Search = withStyles(styles)((props) => {
                         </List>
                     </>
                 )}
-                {selectedDocSet && matchRecords && matchRecords.length === 0 && (
+                {props.search.docSetId && matchRecords && matchRecords.length === 0 && (
                     <Typography variant="body2">
                         No matches - type search terms above, then click 'Search'
                     </Typography>

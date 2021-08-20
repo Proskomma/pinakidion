@@ -6,6 +6,9 @@ const conf = {
   pageTitle: "Search",
   description: "Search a docSet",
   pageClass: Search,
+  state: [
+    ['docSetId', null],
+  ],
 };
 
 export default conf;
