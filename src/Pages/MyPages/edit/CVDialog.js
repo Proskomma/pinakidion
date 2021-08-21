@@ -56,6 +56,7 @@ const CVDialog = ({cOrV}) => {
                 () => {
                     setEditorSelection(editor.selection);
                     setOpen(true);
+                    setN('');
                 }
             }
         >

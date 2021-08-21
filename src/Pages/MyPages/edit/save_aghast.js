@@ -15,7 +15,9 @@ const saveAghast = (rawAghast, setToWrite) => {
     let waitingBlockGrafts = [];
     let currentChapter = null;
     let currentVerses = null;
-    let openScopes = [];
+    let includedScopes;
+    const openScopes = new Set([]);
+    let openSpans = [];
 
     const removeEmptyText = a => {
         return a.map(b => ({...b, children: b.children.filter(c => c.type || (c.text && c.text !== ''))}));
@@ -50,7 +52,8 @@ const saveAghast = (rawAghast, setToWrite) => {
             type: 'scope',
             subType: 'end',
             payload: `chapter/${cn}`,
-        })
+        });
+        openScopes.delete(`chapter/${cn}`);
     }
 
     const startChapter = (ret, cn) => {
@@ -58,10 +61,18 @@ const saveAghast = (rawAghast, setToWrite) => {
             type: 'scope',
             subType: 'start',
             payload: `chapter/${cn}`,
-        })
+        });
+        openScopes.add(`chapter/${cn}`);
+        includedScopes.add(`chapter/${cn}`);
     }
 
     const endVerses = (ret, v) => {
+        ret.push({
+            type: 'scope',
+            subType: 'end',
+            payload: `verses/${v}`,
+        });
+        openScopes.delete(`verses/${v}`);
         if (v.includes('-')) {
             let [fromVerse, toVerse] = v
                 .split('-')
@@ -73,27 +84,19 @@ const saveAghast = (rawAghast, setToWrite) => {
                     payload: `verse/${toVerse}`,
                 })
                 toVerse--;
-            }
+            };
+            openScopes.delete(`verse/${toVerse}`);
         } else {
             ret.push({
                 type: 'scope',
                 subType: 'end',
                 payload: `verse/${v}`,
-            })
+            });
+            openScopes.delete(`verse/${v}`);
         }
-        ret.push({
-            type: 'scope',
-            subType: 'end',
-            payload: `verses/${v}`,
-        })
     }
 
     const startVerses = (ret, v) => {
-        ret.push({
-            type: 'scope',
-            subType: 'start',
-            payload: `verses/${v}`,
-        })
         if (v.includes('-')) {
             let [fromVerse, toVerse] = v.split('-').map(v => parseInt(v));
             while (fromVerse <= toVerse) {
@@ -101,7 +104,9 @@ const saveAghast = (rawAghast, setToWrite) => {
                     type: 'scope',
                     subType: 'start',
                     payload: `verse/${fromVerse}`,
-                })
+                });
+                openScopes.add(`verse/${fromVerse}`);
+                includedScopes.add(`verse/${fromVerse}`);
                 fromVerse++;
             }
         } else {
@@ -109,8 +114,17 @@ const saveAghast = (rawAghast, setToWrite) => {
                 type: 'scope',
                 subType: 'start',
                 payload: `verse/${v}`,
-            })
+            });
+            openScopes.add(`verse/${v}`);
+            includedScopes.add(`verse/${v}`);
         }
+        ret.push({
+            type: 'scope',
+            subType: 'start',
+            payload: `verses/${v}`,
+        });
+        openScopes.add(`verses/${v}`);
+        includedScopes.add(`verses/${v}`);
     }
 
     const processItems = items => {
@@ -118,21 +132,24 @@ const saveAghast = (rawAghast, setToWrite) => {
         for (const item of items) {
             if (!item.type && item.text) {
                 const textStyles = Object.keys(item).filter(k => k !== 'text');
-                while (openScopes.filter(s => !(textStyles.includes(s))).length > 0) {
+                while (openSpans.filter(s => !(textStyles.includes(s))).length > 0) {
                     ret.push({
                         type: 'scope',
                         subType: 'end',
-                        payload: `span/${openScopes[0]}`,
+                        payload: `span/${openSpans[0]}`,
                     })
-                    openScopes.shift();
+                    openScopes.delete(`span/${openSpans[0]}`);
+                    openSpans.shift();
                 }
-                for (const newStyle of textStyles.filter(t => !(openScopes.includes(t)))) {
+                for (const newStyle of textStyles.filter(t => !(openSpans.includes(t)))) {
                     ret.push({
                         type: 'scope',
                         subType: 'start',
                         payload: `span/${newStyle}`,
                     });
-                    openScopes.unshift(newStyle);
+                    openScopes.add(`span/${newStyle}`);
+                    includedScopes.add(`span/${newStyle}`);
+                    openSpans.unshift(newStyle);
                 }
                 const tokenized = tokenizeString(item.text);
                 for (const [tokenText, tokenType] of tokenized) {
@@ -163,18 +180,13 @@ const saveAghast = (rawAghast, setToWrite) => {
                 }
             }
         }
-        for (const openScope of openScopes) {
+        for (const openScope of openSpans) {
             ret.push({
                 type: 'scope',
                 subType: 'end',
                 payload: `span/${openScope}`,
             })
-        }
-        if (currentVerses) {
-            endVerses(ret, currentVerses);
-        }
-        if (currentChapter) {
-            endChapter(ret, currentChapter);
+            openScopes.delete(`span/${openScope}`);
         }
         return ret;
     };
@@ -188,18 +200,35 @@ const saveAghast = (rawAghast, setToWrite) => {
                 payload: blockLike.seqId,
             });
         } else {
+            const string2scope = str => ({
+               type: 'scope',
+               subType: 'start',
+               payload: str,
+            });
+            includedScopes = new Set([]);
+            const oss = Array.from(openScopes)
+            const items = processItems(blockLike.children);
             blocks.push({
+                os: oss.map(string2scope),
+                is: Array.from(includedScopes).map(string2scope),
                 bs: {
                     type: 'scope',
                     subType: 'start',
                     payload: blockLike.scope,
                 },
                 bg: waitingBlockGrafts,
-                items: processItems(blockLike.children),
+                items: items,
             });
             waitingBlockGrafts = [];
         }
     }
+    if (currentVerses) {
+        endVerses(blocks[blocks.length -1].items, currentVerses);
+    }
+    if (currentChapter) {
+        endChapter(blocks[blocks.length -1].items, currentChapter);
+    }
+    // console.log(JSON.stringify(blocks, null, 2));
     setToWrite(blocks);
 }
 

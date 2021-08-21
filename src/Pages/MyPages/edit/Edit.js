@@ -85,10 +85,12 @@ const Edit = withStyles(styles)((props) => {
     }, [props.pk, props.edit.docSetId, props.edit.documentId, props.edit.bookCode, props.edit.sequenceId, toWrite]);
 
     React.useEffect(() => {
+
         const escapePayload = str => str.replace('"', '\\"');
-        const object2Query = obs => '[' + obs.map(ob => `{type: "${ob.type}" subType: "${ob.subType}" payload: "${escapePayload(ob.payload)}"}`).join(', ') + ']';
-        const oneObject2Query = ob => `{type: "${ob.type}" subType: "${ob.subType}" payload: "${escapePayload(ob.payload)}"}`;
-        const blocksSpec2Query = bSpec => '[' + bSpec.map(b => `{bs: ${oneObject2Query(b.bs)}, bg: ${object2Query(b.bg)}, items: ${object2Query(b.items)}}`) + ']';
+        const object2Query = obs => '[' + obs.map(ob => `\n    {\n      type: "${ob.type}" \n      subType: "${ob.subType}" \n      payload: "${escapePayload(ob.payload)}"\n    }`).join(',') + ']';
+        const oneObject2Query = ob => `{\n      type: "${ob.type}" \n      subType: "${ob.subType}" \n      payload: "${escapePayload(ob.payload)}"}`;
+        const blocksSpec2Query = bSpec => '[\n' + bSpec.map(b => `  {\n    bs: ${oneObject2Query(b.bs)}, \n    bg: ${object2Query(b.bg)}, \n    os: ${object2Query(b.os)}, \n    is: ${object2Query(b.is)}, \n    items: ${object2Query(b.items)}}\n`) + ']';
+
         const doQuery = async blocks => {
             const blockQuery = blocksSpec2Query(blocks);
             const writeQuery = `mutation { updateAllBlocks(` +

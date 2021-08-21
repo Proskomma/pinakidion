@@ -21,7 +21,7 @@
     "react-scripts": "^4.0.3",
     "slate": "^0.63.0",
     "slate-react": "^0.65.2",
-    "uw-proskomma": "^0.4.29",
+    "uw-proskomma": "^0.4.31",
     "xregexp": "^5.0.2"
   },
   "scripts": {
